@@ -1,17 +1,34 @@
-import streamlit as st 
-import imutils
-from PIL import Image
-import numpy as np
+import streamlit as st
+import requests, uuid, json
 
-st.title("My Streamlit Image Resizer")
+st.title("Scripter")
+text=st.text_area("Enter your text",value="My name is Tue Hellstern")
+target_lang=st.text_input("Enter target language", value='it')
 
-content_file = st.sidebar.file_uploader("Choose a Content Image", type=["png", "jpg", "jpeg"])
+subscription_key = "3e4e9143-bf02-4f15-afd3-43480a0b89c1"
+endpoint = "https://api.cognitive.microsofttranslator.com"
+location = "northeurope"
+path = '/translate'
+constructed_url = endpoint + path
 
-imgWidth = st.sidebar.number_input('Resized Image Width', 1, step=1)
+params = {
+  'api-version': '3.0',
+  'to': target_lang[:2]
+}
+constructed_url = endpoint + path
 
-if content_file is not None and imgWidth>1:
-  content = Image.open(content_file)
-  content = np.array(content)
-  content = imutils.resize(content, width=imgWidth)
+headers = {
+  'Ocp-Apim-Subscription-Key': subscription_key,
+  'Ocp-Apim-Subscription-Region': location,
+  'Content-type': 'application/json',
+  'X-ClientTraceId': str(uuid.uuid4())
+}
+body = [{
+  'text': text
+}]
 
-  st.image(content, clamp=True)
+request = requests.post(constructed_url, params=params, headers=headers, json=body)
+response = request.json()
+
+if st.button("Submit"):
+  st.write(response[0]['translations'][0]['text'])
