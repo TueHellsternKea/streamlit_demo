@@ -1,11 +1,12 @@
 import streamlit as st
 import requests, uuid, json
+import(config.subscription_key)
 
 st.title("Translate")
 text=st.text_area("Enter your text",value="My name is Tue Hellstern")
 target_lang = st.selectbox('Enter target language', ('da', 'it', 'de', 'sv'))
 
-subscription_key = "2c20f62819a84588a41195f43b9da010"
+subscription_key = config.subscription_key
 endpoint = "https://api.cognitive.microsofttranslator.com"
 location = "northeurope"
 path = '/translate'
